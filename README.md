@@ -4,7 +4,7 @@
 
 This is a Vim plugin that provides [Alumina][a] file detection and syntax highlighting.
 
-**NOTE**: This plugin is re-arranged based on [rust.vim](https://github.com/rust-lang/rust.vim) and not all Alumina features may be included, so expect some inconsistencies. (And viceversa, you may see Rust highlighting that is not in Alumina.)
+**NOTE**: This plugin is rearranged based on [rust.vim](https://github.com/rust-lang/rust.vim) and not all Alumina features may be included, so expect some inconsistencies. (And viceversa, you may see Rust highlighting that is not in Alumina.)
 
 ## Installation
 
