@@ -1,8 +1,9 @@
-" Vim indent file
-" Language:         Rust
-" Author:           Chris Morgan <me@chrismorgan.info>
-" Last Change:      2018 Jan 10
-" For bugs, patches and license go to https://github.com/rust-lang/rust.vim
+" Language:     Alumina
+" Description:  Vim indent file
+" Maintainer:   Benjamín García Roqués <benjamingarciaroques@gmail.com>
+" Last Change:  October 10, 2024
+" For bugs, patches and license go to https://github.com/benstt/alumina.vim
+
 
 " Only load this indent file when no other was loaded.
 if exists("b:did_indent")
@@ -22,12 +23,12 @@ setlocal autoindent	" indentexpr isn't much help otherwise
 " Also do indentkeys, otherwise # gets shoved to column 0 :-/
 setlocal indentkeys=0{,0},!^F,o,O,0[,0],0(,0)
 
-setlocal indentexpr=GetRustIndent(v:lnum)
+setlocal indentexpr=GetAluminaIndent(v:lnum)
 
 let b:undo_indent = "setlocal cindent< cinoptions< cinkeys< cinwords< lisp< autoindent< indentkeys< indentexpr<"
 
 " Only define the function once.
-if exists("*GetRustIndent")
+if exists("*GetAluminaIndent")
     finish
 endif
 
@@ -73,7 +74,7 @@ function! s:is_string_comment(lnum, col)
     if has('syntax_items')
         for id in synstack(a:lnum, a:col)
             let synname = synIDattr(id, "name")
-            if synname ==# "rustString" || synname =~# "^rustComment"
+            if synname ==# "aluminaString" || synname =~# "^aluminaComment"
                 return 1
             endif
         endfor
@@ -93,7 +94,7 @@ else
     endfunc
 endif
 
-function GetRustIndent(lnum)
+function GetAluminaIndent(lnum)
     " Starting assumption: cindent (called at the end) will do it right
     " normally. We just want to fix up a few cases.
 
@@ -101,7 +102,7 @@ function GetRustIndent(lnum)
 
     if has('syntax_items')
         let synname = synIDattr(synID(a:lnum, 1, 1), "name")
-        if synname ==# "rustString"
+        if synname ==# "aluminaString"
             " If the start of the line is in a string, don't change the indent
             return -1
         elseif synname =~? '\(Comment\|Todo\)'
@@ -111,7 +112,7 @@ function GetRustIndent(lnum)
                     " This is (hopefully) the line after a /*, and it has no
                     " leader, so the correct indentation is that of the
                     " previous line.
-                    return GetRustIndent(a:lnum - 1)
+                    return GetAluminaIndent(a:lnum - 1)
                 endif
             endif
             " If it's in a comment, let cindent take care of it now. This is
@@ -122,10 +123,10 @@ function GetRustIndent(lnum)
         endif
     endif
 
-    " cindent gets second and subsequent match patterns/struct members wrong,
+    " cindent gets second and subsequent switch patterns/struct members wrong,
     " as it treats the comma as indicating an unfinished statement::
     "
-    " match a {
+    " switch a {
     "     b => c,
     "         d => e,
     "         f => g,
@@ -148,7 +149,7 @@ function GetRustIndent(lnum)
         let [l:found_line, l:col, l:submatch] =
                     \ searchpos('\<\(fn\)\|\(if\)\>', 'bnWp')
         if l:found_line !=# 0
-            " Now we count the number of '{' and '}' in between the match
+            " Now we count the number of '{' and '}' in between the switch
             " locations and the current line (there is probably a better
             " way to compute this).
             let l:i = l:found_line
@@ -230,7 +231,7 @@ function GetRustIndent(lnum)
         " if baz && (foo ||
         "            bar) {
         "
-        " Another case is when the current line is a new match arm.
+        " Another case is when the current line is a new switch arm.
         "
         " There are probably other cases where we don't want to do this as
         " well. Add them as needed.
